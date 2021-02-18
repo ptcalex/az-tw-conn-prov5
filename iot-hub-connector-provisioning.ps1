@@ -3,7 +3,7 @@
 # AZURE IOT HUB PARAMETERS #
 $azStorageAccount = ""    # Azure storage account name
 $azIoTHub = ""            # Azure IoT Hub name
-$azConsumerGroup = ""     # Name of consumer group name (see Azure Portal > IoT Hub > Built-in endpoints)
+$azConsumerGroup = ""     # Name of consumer group (see Azure Portal > IoT Hub > Built-in endpoints)
 
 # THINGWORX PARAMETERS #
 $twUrl = ""               # "https://hostname:port/Thingworx"
