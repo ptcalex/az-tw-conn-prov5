@@ -1,14 +1,14 @@
 ##### CONFIGURATION - MUST SETUP IN ADVANCE #####
 
 # AZURE IOT HUB PARAMETERS #
-$azStorageAccount = ""    # storage account name
-$azIoTHub = ""            # IoT Hub name
-$azConsumerGroup = ""     # consumer group name (see Azure Portal > IoT Hub > Built-in endpoints)
+$azStorageAccount = ""    # Azure storage account name
+$azIoTHub = ""            # Azure IoT Hub name
+$azConsumerGroup = ""     # Name of consumer group name (see Azure Portal > IoT Hub > Built-in endpoints)
 
 # THINGWORX PARAMETERS #
 $twUrl = ""               # "https://hostname:port/Thingworx"
-$twApplicationKey = ""    # your application key previously created in ThingWorx
-$twProject = ""           # ThingWorx project to created for collecting provisioned entities
+$twApplicationKey = ""    # Your application key - previously created in ThingWorx
+$twProject = ""           # ThingWorx project - created to collect provisioned entities
 $twAzureBlobTemplate = "AzureBlobStorageTemplate"
 $twAzureBlobThing = ""    # Azure Storage Container thing
 $twAzureIotHubTemplate = "AzureIotHubTemplate"
