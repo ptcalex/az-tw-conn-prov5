@@ -1,19 +1,20 @@
 ##### CONFIGURATION - MUST SETUP IN ADVANCE #####
 
 # AZURE IOT HUB PARAMETERS #
-$azStorageAccount = ""    # Azure storage account name
-$azIoTHub = ""            # Azure IoT Hub name
-$azConsumerGroup = ""     # Name of consumer group (see Azure Portal > IoT Hub > Built-in endpoints)
+$azStorageAccount = "" # Azure storage account name
+$azIoTHub = "" # Azure IoT Hub name
+$azConsumerGroup = "" # Consumer group (Azure Portal > IoT Hub > Built-in endpoints)
 
 # THINGWORX PARAMETERS #
-$twUrl = ""               # "https://hostname:port/Thingworx"
-$twApplicationKey = ""    # Your application key - previously created in ThingWorx
-$twProject = ""           # ThingWorx project - created to collect provisioned entities
+$twUrl = "" # "https://hostname:port/Thingworx"
+$twApplicationKey = "" # Application key - previously created in ThingWorx
+$twProject = "" # ThingWorx project - created to collect provisioned entities
 $twAzureBlobTemplate = "AzureBlobStorageTemplate"
-$twAzureBlobThing = ""    # Azure Storage Container thing
+$twAzureBlobThing = "" # Azure Storage Container thing
 $twAzureIotHubTemplate = "AzureIotHubTemplate"
-$twAzureIoTHubThing = ""  # Azure IoT Hub thing
+$twAzureIoTHubThing = "" # Azure IoT Hub thing
 
+$debug = $true
 
 
 ######## IMPLEMENTATION ########
@@ -22,21 +23,28 @@ $twAzureIoTHubThing = ""  # Azure IoT Hub thing
 
 Write-Output "1/7 - Getting Azure Blob Storage connection string..."
 $connectionString = ((az storage account show-connection-string --name $azStorageAccount) | ConvertFrom-Json).connectionString
+if ($debug) { Write-Output "`n$connectionString`n" }
 
 Write-Output "2/7 - Getting Azure IoT Hub iothubowner policy connection string..."
-$iotHubOwnerPolicyConnectionString = ((az iot hub show-connection-string --hub-name $azIoTHub --policy-name iothubowner --key primary) | ConvertFrom-Json).connectionString
+$iotHubOwnerPolicyConnectionString = ((az iot hub connection-string show --hub-name $azIoTHub --policy-name iothubowner --key primary) | ConvertFrom-Json).connectionString
+if ($debug) { Write-Output "`n$iotHubOwnerPolicyConnectionString`n" }
 
 Write-Output "3/7 - Getting Azure IoT Hub service policy connection string..."
-$consumerPolicyConnectionString = ((az iot hub show-connection-string --hub-name $azIoTHub --policy-name service --key primary) | ConvertFrom-Json).connectionString
+$consumerPolicyConnectionString = ((az iot hub connection-string show --hub-name $azIoTHub --policy-name service --key primary) | ConvertFrom-Json).connectionString
+if ($debug) { Write-Output "`n$consumerPolicyConnectionString`n" }
 
 Write-Output "4/7 - Getting Azure IoT Hub registryReadWrite policy connection string..."
-$registryPolicyConnectionString = ((az iot hub show-connection-string --hub-name $azIoTHub --policy-name registryReadWrite --key primary) | ConvertFrom-Json).connectionString
+$registryPolicyConnectionString = ((az iot hub connection-string show --hub-name $azIoTHub --policy-name registryReadWrite --key primary) | ConvertFrom-Json).connectionString
+if ($debug) { Write-Output "`n$registryPolicyConnectionString`n" }
 
 Write-Output "5/7 - Getting Azure Event Hub compatible name..."
 $eventHubName = (az iot hub show --name $azIoTHub | ConvertFrom-Json).properties.eventHubEndpoints.events.path
+if ($debug) { Write-Output "`n$eventHubName`n" }
 
 Write-Output "6/7 - Getting Azure Event Hub endpoint..."
 $eventHubEndpoint = (az iot hub show --name $azIoTHub | ConvertFrom-Json).properties.eventHubEndpoints.events.endpoint
+if ($debug) { Write-Output "`n$eventHubEndpoint`n" }
+
 $sharedAccessKeyName = $iotHubOwnerPolicyConnectionString.split(";")[1]
 $sharedAccessKey = $iotHubOwnerPolicyConnectionString.split(";")[2]
 $eventHubCompatibleEndpoint = "Endpoint=$eventHubEndpoint;$sharedAccessKeyName;$sharedAccessKey;EntityPath=$eventHubName"
@@ -80,3 +88,4 @@ $Headers = @{
 }
 $Body = ConvertTo-Json $json
 Invoke-RestMethod -Method POST -Uri $Url -Body $Body -Headers $Headers | ConvertTo-Json
+if ($debug) { Write-Output "`n$Body`n" }
